@@ -337,13 +337,14 @@ router.post("/startGame", (req, res) => {
         if (err) {
           console.log(err);
         } else {
-          console.log(doc);
+          console.log("sending",doc);
+          socketManager.getIo().in(gameId).emit("rendered",doc);
         }
       }
     );
     room.delete();
     socketManager.getIo().emit("updateLobbiesAll");
-    socketManager.getIo().to(gameId).emit("rendered");
+    
   });
   res.send({});
 });

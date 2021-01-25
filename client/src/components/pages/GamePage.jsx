@@ -76,31 +76,32 @@ export class GamePage extends Component {
       .then((user) => {
         this.setState({ user: user });
       })
-          .then(() => {
-            if (loadCount == json.tilesets.length) {
-              this.gameLoop();
-            }
+          .then(() => {  
             socket.on("update", (gameState) => {
               this.setState({ gameState: gameState });
             });
             socket.on("rendered", (gamestate) => {
+              console.log("game",gamestate);
               this.setState({
-                gameState: currState,
-                isMarco: isMarco,
+                gameState: gamestate,
+                isMarco: gamestate.players[this.state.user._id].role === "marco",
                 powerup: {
-                  name: isMarco ? "Thermal Radar" : "Instant Transmission",
-                  cooldown: isMarco
-                    ? currState.settings.marcoRadar * 1000
-                    : currState.settings.poloTP * 1000,
+                  name: gamestate.players[this.state.user._id].role === "marco" ? "Thermal Radar" : "Instant Transmission",
+                  cooldown: gamestate.players[this.state.user._id].role === "marco"
+                    ? gamestate.settings.marcoRadar * 1000
+                    : gamestate.settings.poloTP * 1000,
                   ready: true,
                 },
                 tag: {
                   name: "Tag",
-                  cooldown: currState.settings.marcoTimer * 1000,
+                  cooldown: gamestate.settings.marcoTimer * 1000,
                   ready: true,
                 },
               });
-            })
+            });
+            if (loadCount == json.tilesets.length) {
+              this.gameLoop();
+            }
           });
   }
 

@@ -277,12 +277,22 @@ export const drawCanvas = (drawState, userId, tilesets) => {
   context.arc(drawX - view.x, drawY - view.y, 100, 0, 2 * Math.PI, false);
   context.clip();
 
-  let gradient = context.createRadialGradient(drawX - view.x, drawY - view.y, 20, drawX - view.x, drawY - view.y, 400);
+  let vision;
+
+  if (drawState.players[userId].role === "marco") {
+    vision = drawState.settings.marcoVision;
+  } else {
+    vision = drawState.settings.poloVision;
+  }
+  console.log(drawState.players);
+
+  let gradient = context.createRadialGradient(drawX - view.x, drawY - view.y, 20, drawX - view.x, drawY - view.y, vision);
   let opacity = 0.20; //55% visible
   gradient.addColorStop(1,'transparent');
   gradient.addColorStop(0.005,'rgba(255,255,255,'+opacity+')');
-  fillCircle(context, drawX - view.x, drawY - view.y, 400, gradient);
+  fillCircle(context, drawX - view.x, drawY - view.y, vision, gradient);
   drawPlayer(context, x, y, "red",view);
+  console.log(opacity);
 
   for (let layer_ind = 0; layer_ind < json.layers.length; layer_ind++) {
     if (json.layers[layer_ind].type != "tilelayer") continue;
