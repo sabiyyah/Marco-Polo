@@ -343,6 +343,7 @@ router.post("/startGame", (req, res) => {
     );
     room.delete();
     socketManager.getIo().emit("updateLobbiesAll");
+    socketManager.getIo().to(gameId).emit("rendered");
   });
   res.send({});
 });

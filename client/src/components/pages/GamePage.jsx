@@ -76,32 +76,6 @@ export class GamePage extends Component {
       .then((user) => {
         this.setState({ user: user });
       })
-      .then(() => {
-        get("/api/initialRender", { gameId: this.props.gameId })
-          .then((res) => {
-            let currState = res.initialRender;
-            if (loadCount == json.tilesets.length) {
-              this.processUpdate(currState);
-            }
-            let isMarco = currState.players[this.state.user._id].role == "marco";
-            console.log(isMarco);
-            this.setState({
-              gameState: currState,
-              isMarco: isMarco,
-              powerup: {
-                name: isMarco ? "Thermal Radar" : "Instant Transmission",
-                cooldown: isMarco
-                  ? currState.settings.marcoRadar * 1000
-                  : currState.settings.poloTP * 1000,
-                ready: true,
-              },
-              tag: {
-                name: "Tag",
-                cooldown: currState.settings.marcoTimer * 1000,
-                ready: true,
-              },
-            });
-          })
           .then(() => {
             if (loadCount == json.tilesets.length) {
               this.gameLoop();
@@ -109,8 +83,25 @@ export class GamePage extends Component {
             socket.on("update", (gameState) => {
               this.setState({ gameState: gameState });
             });
+            socket.on("rendered", (gamestate) => {
+              this.setState({
+                gameState: currState,
+                isMarco: isMarco,
+                powerup: {
+                  name: isMarco ? "Thermal Radar" : "Instant Transmission",
+                  cooldown: isMarco
+                    ? currState.settings.marcoRadar * 1000
+                    : currState.settings.poloTP * 1000,
+                  ready: true,
+                },
+                tag: {
+                  name: "Tag",
+                  cooldown: currState.settings.marcoTimer * 1000,
+                  ready: true,
+                },
+              });
+            })
           });
-      });
   }
 
   gameLoop = () => {
