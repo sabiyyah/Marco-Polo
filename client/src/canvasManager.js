@@ -261,7 +261,7 @@ export const drawCanvas = (drawState, userId, tilesets, initial, thermal) => {
   numx = json.width;
   numy = json.height;
   canvas = document.getElementById("map-layer");
-  canvasPlayer = document.getElementById("map-layer");
+  canvasPlayer = document.getElementById("player-layer");
 
   if (!canvas) return;
   const context = canvas.getContext("2d");
